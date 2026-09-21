@@ -35,7 +35,6 @@ I built this for myself. I wanted to know how much I actually save.
 
 - **Expense trackers only record what I paid.** None of them has a place for what I *would* have paid: the member price, the early-bird ticket, the bus instead of the taxi. Those choices add up, but they leave no trace, so I couldn't tell whether my effort to spend carefully was making any difference.
 - **Travelling makes it harder.** I spend long stretches moving around the UK and Europe, paying in pounds and euros but thinking in Taiwan dollars. I wanted every figure, spending and savings alike, in one currency I actually feel.
-- **Logging has to be instant.** If recording a purchase takes more than a few seconds at the till, or needs a signal on the Underground, I stop doing it and the numbers become fiction.
 
 So every entry can carry two numbers: what I paid, and what it would have cost. It is still a full expense tracker, kept separate from my everyday budget at home; the savings sit alongside it rather than replacing it.
 
