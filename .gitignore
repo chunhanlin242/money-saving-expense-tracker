@@ -1,0 +1,8 @@
+node_modules/
+.wrangler/
+.dev.vars
+*.log
+
+# Chinese READMEs (root and google-sheets/), kept local only
+README.zh.md
+google-sheets/README.zh.md

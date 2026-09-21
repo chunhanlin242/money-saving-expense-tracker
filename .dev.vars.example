@@ -1,0 +1,5 @@
+# 複製成 .dev.vars（不進版控）再改成你自己的值。
+# 這兩個只對 localhost 的 wrangler dev 有效，跟線上的 secrets 是分開的。
+# 線上的用 `npx wrangler secret put APP_PASSWORD` 設定。
+APP_PASSWORD=change-me
+SESSION_SECRET=local-dev-only-change-me

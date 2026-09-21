@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="旅行記帳">
+  <rect width="512" height="512" rx="112" fill="#e8590c"/>
+  <g fill="#ffffff">
+    <rect x="140" y="300" width="52" height="76" rx="12"/>
+    <rect x="230" y="240" width="52" height="136" rx="12"/>
+    <rect x="320" y="160" width="52" height="216" rx="12"/>
+  </g>
+  <rect x="140" y="404" width="232" height="20" rx="10" fill="#ffffff" opacity="0.55"/>
+</svg>
