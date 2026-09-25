@@ -9,7 +9,7 @@
 // 旅行時最難搞的不是完全沒網路，而是連得上卻慢得要命的公共 Wi-Fi。
 // 網路優先會讓開啟 App 卡在等逾時；反正資料在 IndexedDB，shell 拿舊的也無所謂。
 
-const VERSION = "v21";
+const VERSION = "v23";
 const CACHE = "tm-shell-" + VERSION;
 
 // 注意：不要放 "/index.html"。

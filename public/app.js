@@ -364,7 +364,6 @@ function renderKeypad() {
       <div class="spacer"></div>
       ${targetDate() !== fx.localDate(new Date())
         ? `<span class="chip datechip">${esc(fx.formatDateLabel(targetDate()))}</span>` : ""}
-      <button class="chip refchip" data-act="ref">原價</button>
       <button class="chip" data-act="country">${flagOf(keypad.country) || "🌐"} ▾</button>
       <button class="chip" data-act="currency">${esc(keypad.currency)} ▾</button>
     </div>
@@ -380,6 +379,10 @@ function renderKeypad() {
           <span class="ic">${esc(c.icon)}</span>
           <span class="nm">${esc(c.name)}</span>
         </button>`).join("")}
+    </div>
+    <div class="fieldbar">
+      <button class="fieldtab" data-field="amount"><span class="k">實付</span><span class="v num" id="kp-f-amount"></span></button>
+      <button class="fieldtab ref" data-field="reference"><span class="k">原價</span><span class="v num" id="kp-f-ref"></span></button>
     </div>
     <div class="keypad">
       <button class="key fn" data-k="clear">C</button>
@@ -409,11 +412,10 @@ function renderKeypad() {
 
   el.querySelector('[data-act="close"]').onclick = () => { buzz(); closeKeypad(); };
 
-  el.querySelector('[data-act="ref"]').onclick = () => {
-    buzz();
-    switchField(keypad.field === "reference" ? "amount" : "reference");
-    updateKeypadDisplay();
-  };
+  // 放在鍵盤正上方而不是頂列：單手拿手機時拇指搆得到，兩格並排也一眼看得出正在輸入哪一個
+  for (const b of el.querySelectorAll("[data-field]")) {
+    b.onclick = () => { buzz(); switchField(b.dataset.field); updateKeypadDisplay(); };
+  }
 
   el.querySelector('[data-act="currency"]').onclick = () => openCurrencyPicker((code) => {
     keypad.currency = code;
@@ -616,12 +618,16 @@ function updateKeypadDisplay() {
     pending.textContent = "";
   }
 
-  // 原價按鈕：有填就顯示金額，讓人不用切過去也知道填了什麼
-  const refBtn = document.querySelector('[data-act="ref"]');
-  if (refBtn) {
-    refBtn.classList.toggle("on", onRef);
-    refBtn.textContent = ref > 0 ? `原價 ${fx.formatAmount(ref, keypad.currency)}` : "原價";
+  // 切換列兩格都顯示目前的值，不用切過去也知道另一邊填了什麼
+  for (const b of document.querySelectorAll(".fieldtab")) {
+    const on = b.dataset.field === keypad.field;
+    b.classList.toggle("on", on);
+    b.setAttribute("aria-pressed", on);
   }
+  const fAmt = document.getElementById("kp-f-amount");
+  const fRef = document.getElementById("kp-f-ref");
+  if (fAmt) fAmt.textContent = amt > 0 ? fx.formatAmount(amt, keypad.currency) : "—";
+  if (fRef) fRef.textContent = ref > 0 ? fx.formatAmount(ref, keypad.currency) : "選填";
 
   const go = document.querySelector(".key.go");
   if (go) go.disabled = fieldValue("amount") <= 0;
@@ -2316,9 +2322,9 @@ function tabbar() {
        <span class="ic">${ic}</span><span>${name}</span></button>`;
   return `<nav class="tabbar"><div class="tabbar-inner">
     ${tab("home", "◧", "首頁")}
-    ${tab("list", "☰", "明細")}
-    <div class="fab-slot"><button class="fab" data-act="add" aria-label="記一筆">＋</button></div>
     ${tab("stats", "◔", "統計")}
+    <div class="fab-slot"><button class="fab" data-act="add" aria-label="記一筆">＋</button></div>
+    ${tab("list", "☰", "明細")}
     ${tab("settings", "⚙", "設定")}
   </div></nav>`;
 }
@@ -2410,6 +2416,9 @@ function renderHome() {
   const todayLocal = sum(todayRows.filter((r) => r.currency === localCur), (r) => r.amount);
 
   const onTripTwd = sum(onTrip, (r) => r.amount_twd);
+  // 省下算整個範圍（含行前）：早鳥機票這種省錢多半是行前付的
+  const savedRows = expenses.filter(hasSaving);
+  const savedTotal = sum(savedRows, savedTwd);
   const prepaidTwd = sum(prepaid, (r) => r.amount_twd);
   const activeDays = new Set(onTrip.map((e) => e.spent_date)).size || 1;
 
@@ -2431,12 +2440,13 @@ function renderHome() {
         }</div>` : ""}
       </div>
 
-      <div class="statgrid">
+      <div class="statgrid three">
         <div class="stat"><div class="k">在地花費</div><div class="v num">${esc(fx.formatTwd(onTripTwd))}</div><div class="sub">${onTrip.length} 筆 · ${activeDays} 天</div></div>
-        <div class="stat"><div class="k">每日平均</div><div class="v num">${esc(fx.formatTwd(onTripTwd / activeDays))}</div><div class="sub">以有記帳的天數算</div></div>
+        <div class="stat"><div class="k">每日平均</div><div class="v num">${esc(fx.formatTwd(onTripTwd / activeDays))}</div><div class="sub">有記帳的天</div></div>
+        <div class="stat saved"><div class="k">省下</div><div class="v num">${esc(fx.formatTwd(savedTotal))}</div><div class="sub">${savedRows.length} 筆</div></div>
         ${prepaid.length ? `
         <div class="stat"><div class="k">行前已付</div><div class="v num">${esc(fx.formatTwd(prepaidTwd))}</div><div class="sub">${prepaid.length} 筆</div></div>
-        <div class="stat"><div class="k">合計</div><div class="v num">${esc(fx.formatTwd(onTripTwd + prepaidTwd))}</div><div class="sub">含行前</div></div>` : ""}
+        <div class="stat wide"><div class="k">合計</div><div class="v num">${esc(fx.formatTwd(onTripTwd + prepaidTwd))}</div><div class="sub">含行前</div></div>` : ""}
       </div>
 
       <div class="section-head">
@@ -2541,11 +2551,6 @@ function renderStats() {
 
   const savedRows = rows.filter(hasSaving);
   const savedTotal = sum(savedRows, savedTwd);
-  const savedByCat = (() => {
-    const m = new Map();
-    for (const e of savedRows) m.set(e.category_id || "", (m.get(e.category_id || "") || 0) + savedTwd(e));
-    return [...m.entries()].sort((a, b) => b[1] - a[1]);
-  })();
 
   return topbar("統計") + `
     <div class="screen">
@@ -2565,6 +2570,8 @@ function renderStats() {
           const color = diff > 0 ? "var(--danger)" : "var(--ok)";
           return `${esc(scope.prevLabel)} ${fx.formatTwd(prevTotal)}　<b style="color:${color}">${diff >= 0 ? "多" : "少"} ${fx.formatTwd(Math.abs(diff))}（${pct}%）</b>`;
         })()}</div>` : ""}
+        ${savedRows.length ? `<button class="secondary num savedline" data-act="savings">
+          省下 <b>${esc(fx.formatTwd(savedTotal))}</b>　·　少付了 ${Math.round(savedTotal / (total + savedTotal) * 100)}% →</button>` : ""}
       </div>
       ${days.length > 1 ? `
       <div class="section-head"><h2>每日花費</h2><button class="more" data-act="toggle-table">看數字</button></div>
@@ -2610,30 +2617,6 @@ function renderStats() {
         </div>`).join("")}
       </div>` : ""}
 
-      ${savedRows.length ? `
-      <div class="section-head"><h2>省下</h2><button class="more" data-act="savings">明細 →</button></div>
-      <div class="hero" style="border-top:1px solid var(--line)">
-        <div class="label">${savedRows.length} 筆有填「本來要花」</div>
-        <div class="primary num" style="color:var(--ok)">${esc(fx.formatTwd(savedTotal))}</div>
-        <div class="secondary num">本來可能花 ${esc(fx.formatTwd(total + savedTotal))}　·　少付了 ${Math.round(savedTotal / (total + savedTotal) * 100)}%</div>
-      </div>
-      ${savedByCat.length > 1 ? `<div class="rows">
-        ${savedByCat.map(([id, twd]) => {
-          const c = catById(id);
-          return `<div class="row limit">
-            <div style="display:flex;gap:8px">
-              <span class="k">${esc(c ? c.icon + " " + c.name : "未分類")}</span>
-              <span class="v num" style="margin-left:auto;color:var(--ok)">${esc(fx.formatTwd(twd))}</span>
-            </div>
-            ${bar(twd, savedTotal)}
-          </div>`;
-        }).join("")}
-      </div>` : ""}
-      <div class="note">
-        這個數字<b>沒有</b>從支出裡扣掉，兩邊是分開的 —— 折扣價買下的東西還是花了錢，
-        把「省下」拿去抵銷花費只會讓帳看起來比實際好看。
-      </div>` : ""}
-
       ${taxRows.length ? `
       <div class="section-head"><h2>可退稅</h2><button class="more" data-act="tax">明細 →</button></div>
       <div class="rows">
@@ -2641,6 +2624,10 @@ function renderStats() {
           <span class="v num" style="font-weight:650">${esc(fx.formatTwd(sum(taxRows, (r) => r.amount_twd)))}</span></div>
       </div>` : ""}
 
+      ${savedRows.length ? `<div class="note">
+        「省下」<b>沒有</b>從支出裡扣掉，兩邊是分開的 —— 折扣價買下的東西還是花了錢，
+        把「省下」拿去抵銷花費只會讓帳看起來比實際好看。
+      </div>` : ""}
       <div class="note">
         分類與各國用排序長條而不是圓餅圖：超過六塊之後，相鄰扇形的角度差人眼分辨不出來，
         排序長條同時把數字寫在旁邊，兼具表格的功能。

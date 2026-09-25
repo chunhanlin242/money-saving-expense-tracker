@@ -57,14 +57,18 @@ That situation almost always means the wrong wallet was picked while logging, an
 
 | Page | Question it answers |
 |---|---|
-| Home | How much today? How much this trip? What did I just log? (**Deliberately only three blocks; don't pile more on top**) |
+| Home | How much today? How much this trip? How much have I saved? What did I just log? (**Deliberately only three blocks; don't pile more on top**; "saved" is one cell in the number grid, not a separate block, and doesn't link to the Saved page) |
 | Entries | Every entry, tap to edit |
-| Stats | Where did the money go (category share, spending by country) |
+| Stats | Where did the money go (category share, spending by country), and how much did I save (one line under the total: amount saved + discount %, tapping it opens the Saved page) |
 | Accounts | How much do I have left (cash balances, card limit this month). Opened from 💳 in the home header or from Settings |
 | Settings | Trips, payment methods, exchange rates, sync |
 
 Logging is **three fast steps**: amount → category → save, all on one screen with no scrolling. Tapping a category saves immediately;
 a long press opens the detail form. Don't break this flow to fit in more fields.
+
+The paid / original-price switch sits in a bar directly above the keypad. Don't move it back to the top row: the user reported it couldn't be reached one-handed.
+
+Tab order: Home, Stats, +, Entries, Settings (Stats is used more, so it gets the second slot, easier for the thumb).
 
 ## Files
 

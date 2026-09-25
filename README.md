@@ -10,15 +10,15 @@ Log on the phone, review on a laptop; it works fully offline, in any currency.
 <table>
 <tr>
 <td width="50%" valign="top"><img src="docs/screenshots/landing.png" width="260" alt="Home screen"><br>
-<sub><b>Home.</b> Today's spending against the daily budget, trip totals, and the latest entries.</sub></td>
+<sub><b>Home.</b> Today's spending against the daily budget, trip totals, what I've saved, and the latest entries.</sub></td>
 <td width="50%" valign="top"><img src="docs/screenshots/01-logging.png" width="260" alt="Logging keypad"><br>
-<sub><b>Logging in three steps.</b> Type the amount, tap a category, done. The "原價" (original price) button switches the keypad to what it would have cost.</sub></td>
+<sub><b>Logging in three steps.</b> Type the amount, tap a category, done. The bar above the keypad switches between what I paid (實付) and the original price (原價): here £45 paid, £75 original, £30 saved.</sub></td>
 </tr>
 <tr>
 <td width="50%" valign="top"><img src="docs/screenshots/02-saved.png" width="260" alt="Saved page"><br>
 <sub><b>Saved.</b> Running total, which category saves most, and each entry with its discount %. Never subtracted from spending.</sub></td>
 <td width="50%" valign="top"><img src="docs/screenshots/03-stats.png" width="260" alt="Daily spending chart"><br>
-<sub><b>Stats.</b> Daily spending against the budget line, then spending by category.</sub></td>
+<sub><b>Stats.</b> Total spending with what I saved and the discount % right under it, then daily spending against the budget line and spending by category.</sub></td>
 </tr>
 <tr>
 <td width="50%" valign="top"><img src="docs/screenshots/04-accounts.png" width="260" alt="Currency exchange form"><br>
@@ -49,7 +49,7 @@ entry     what I paid          £45.00   Coat
                       saved = 75 − 45 = £30 (40%)
 ```
 
-**One optional field, not a separate ledger.** A saving only exists because of a purchase, so it lives on the entry itself. If you never touch the "original price" button, logging is exactly as fast as before.
+**One optional field, not a separate ledger.** A saving only exists because of a purchase, so it lives on the entry itself. If you never touch the "original price" field, logging is exactly as fast as before.
 
 **"How I saved" is kept apart from "what I bought".** The note says *coat*; the saving note says *end-of-season sale*. Mixing them would make it impossible to ask later which habits save the most.
 
@@ -74,7 +74,7 @@ Guard rails around savings: a saving is recorded only when the reference price i
 Amount → category → saved, all on one screen with no scrolling. Tapping a category saves immediately; a long press opens the full form (payment method, note, bill split, tax refund).
 
 - **The keypad is a calculator.** 3×8 or 12.5+4.2 works directly, for splitting a bill or adding up a receipt
-- **"Paid" and "original price" share the same keypad**, so recording a saving is one extra tap, not a separate form
+- **"Paid" and "original price" share the same keypad**, switched from a bar right above it, so recording a saving is one extra tap, not a separate form. The bar used to be a button in the top row, which I couldn't reach one-handed
 - **On a laptop, it's all keyboard**: typing a number opens the keypad, arrow keys pick a category, Enter saves, Esc closes
 - **The home screen opens by default**, not the keypad. On iPhone, a home-screen shortcut can jump straight to logging instead
 
@@ -118,6 +118,7 @@ Balances are netted automatically (what they owe me minus what I owe them), and 
 
 ## Stats
 
+- **What I saved, right under the total**: the amount and the discount % for the same period, one tap from the full Saved page
 - **Daily spending bar chart**, hand-written SVG, with a budget reference line, hover tooltips and a table view (a tooltip must never be the only way to read a value)
 - **By category, by country, by currency**, for the current trip, a month or a year
 - **Tax-refund list**, with entries marked as claimed
@@ -234,6 +235,7 @@ CLAUDE.md             The standing brief I give AI coding agents: decisions alre
 - **Category management** (2026-08-27): categories trimmed to the ones I actually use, plus a page to add, rename, reorder and delete them and change their icons
 - **Savings** (2026-08-27 to 08-29): reference price on every entry, entered right on the logging keypad; a "how I saved" note; a Saved page with totals, per-category breakdown and discount %; a savings CSV
 - **Google Sheets sync** (2026-08-31): read-only export endpoint with its own token, nightly Apps Script with three sheets
+- **Savings up front** (2026-09-25): what I've saved now sits on the home screen and under the stats total instead of at the bottom of the stats page; the paid / original-price switch moved from the top row to just above the keypad, within thumb reach; Stats moved to the second tab
 
 ### How it was verified
 
