@@ -26,6 +26,7 @@ const state = {
   selectedDate: null,        // 月曆選中的日期；記帳會落在這天
   statsPeriod: "trip",       // 'trip' | 'month' | 'year'
   statsMonth: "",            // YYYY-MM
+  statsDay: null,            // 統計圖點選的那天，圖表下方展開明細
   statsYear: "",             // YYYY
 };
 
@@ -2503,6 +2504,33 @@ function statsPeriodBar() {
   </div>`;
 }
 
+// 總支出下面的「跟上期比」與「省下」，兩格並排。
+// 原本是兩行小字接在總支出後面，手機上擠成一團（使用者回報過），改成跟首頁數字格同一種樣子。
+
+function compareParts(scope, total, prevTotal, savedRows, savedTotal) {
+  const prev = prevTotal !== null && (prevTotal || total) ? (() => {
+    if (!prevTotal) return { none: `${scope.prevLabel}沒有紀錄` };
+    const diff = total - prevTotal;
+    return { label: `比${scope.prevLabel}`, word: diff >= 0 ? "多" : "少", amount: Math.abs(diff),
+             pct: Math.round(Math.abs(diff) / prevTotal * 100), prevTotal,
+             color: diff > 0 ? "var(--danger)" : "var(--ok)" };
+  })() : null;
+  const saved = savedRows.length
+    ? { amount: savedTotal, pct: Math.round(savedTotal / (total + savedTotal) * 100) } : null;
+  return { prev, saved };
+}
+
+function compareGrid(...args) {
+  const { prev, saved } = compareParts(...args);
+  if (!prev && !saved) return "";
+  const prevCell = prev ? `<div class="stat${saved ? "" : " full"}"><div class="k">${esc(prev.none ? args[0].prevLabel : prev.label)}</div>${prev.none
+      ? `<div class="v num">—</div><div class="sub">沒有紀錄</div>`
+      : `<div class="v num" style="color:${prev.color}">${prev.word} ${esc(fx.formatTwd(prev.amount))}</div><div class="sub num">${esc(args[0].prevLabel)} ${esc(fx.formatTwd(prev.prevTotal))}</div>`}</div>` : "";
+  const savedCell = saved ? `<button class="stat saved${prev ? "" : " full"}" data-act="savings"><div class="k">省下 →</div>
+      <div class="v num">${esc(fx.formatTwd(saved.amount))}</div><div class="sub">少付了 ${saved.pct}%</div></button>` : "";
+  return `<div class="statgrid cmpgrid">${prevCell}${savedCell}</div>`;
+}
+
 function renderStats() {
   const scope = statsScope();
   const rows = scope.rows;
@@ -2563,20 +2591,21 @@ function renderStats() {
           const dayCount = new Set(rows.map((e) => e.spent_date)).size;
           return dayCount ? `　·　每天平均 ${fx.formatTwd(total / dayCount)}` : "";
         })()}</div>
-        ${prevTotal !== null && (prevTotal || total) ? `<div class="secondary num" style="margin-top:6px">${(() => {
-          if (!prevTotal) return `${esc(scope.prevLabel)}沒有紀錄`;
-          const diff = total - prevTotal;
-          const pct = Math.round(Math.abs(diff) / prevTotal * 100);
-          const color = diff > 0 ? "var(--danger)" : "var(--ok)";
-          return `${esc(scope.prevLabel)} ${fx.formatTwd(prevTotal)}　<b style="color:${color}">${diff >= 0 ? "多" : "少"} ${fx.formatTwd(Math.abs(diff))}（${pct}%）</b>`;
-        })()}</div>` : ""}
-        ${savedRows.length ? `<button class="secondary num savedline" data-act="savings">
-          省下 <b>${esc(fx.formatTwd(savedTotal))}</b>　·　少付了 ${Math.round(savedTotal / (total + savedTotal) * 100)}% →</button>` : ""}
       </div>
+      ${compareGrid(scope, total, prevTotal, savedRows, savedTotal)}
       ${days.length > 1 ? `
       <div class="section-head"><h2>每日花費</h2><button class="more" data-act="toggle-table">看數字</button></div>
-      ${dailyChart(days, budget)}
-      ${dailyTable(days)}` : ""}
+      ${dailyChart(days, budget, state.statsDay)}
+      ${dailyTable(days)}
+      ${(() => {
+        if (!state.statsDay || !days.some((d) => d.date === state.statsDay)) {
+          return `<div class="chart-hint">點長條看那天的明細</div>`;
+        }
+        const dayRows = onTrip.filter((e) => e.spent_date === state.statsDay);
+        return `<div class="daypick">${dayRows.length
+          ? dayGroupsHtml(dayRows)
+          : `<div class="dayhead"><span class="d">${esc(fx.formatDateLabel(state.statsDay))}</span><span class="t num">${esc(fx.formatTwd(0))}</span></div><div class="chart-hint">這天沒有花費</div>`}</div>`;
+      })()}` : ""}
 
       <div class="section-head"><h2>分類佔比</h2></div>
       <div class="rows">
@@ -2749,6 +2778,7 @@ function bindScreen() {
   for (const el of app.querySelectorAll("[data-period]")) {
     el.onclick = async () => {
       state.statsPeriod = el.dataset.period;
+      state.statsDay = null;
       await db.setMeta("stats_period", state.statsPeriod);
       render();
     };
@@ -2756,6 +2786,7 @@ function bindScreen() {
   for (const el of app.querySelectorAll("[data-stats]")) {
     el.onclick = () => {
       const d = el.dataset.stats === "prev" ? -1 : 1;
+      state.statsDay = null;
       if (state.statsPeriod === "month") state.statsMonth = shiftMonth(state.statsMonth, d);
       if (state.statsPeriod === "year") state.statsYear = String(+state.statsYear + d);
       render();
@@ -2768,6 +2799,17 @@ function bindScreen() {
       render();
     };
   }
+  // 統計圖的長條：點了在圖表下方展開那天的明細，再點一次收起
+  for (const el of app.querySelectorAll(".hit[data-day]")) {
+    el.addEventListener("click", () => {
+      buzz();
+      state.statsDay = state.statsDay === el.dataset.day ? null : el.dataset.day;
+      render();
+      app.querySelector(".daypick")?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    });
+    el.addEventListener("keydown", (ev) => { if (ev.key === "Enter") el.dispatchEvent(new Event("click")); });
+  }
+
   for (const el of app.querySelectorAll("[data-date]")) {
     el.onclick = () => {
       buzz();

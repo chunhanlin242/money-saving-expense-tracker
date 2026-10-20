@@ -18,7 +18,7 @@ Log on the phone, review on a laptop; it works fully offline, in any currency.
 <td width="50%" valign="top"><img src="docs/screenshots/02-saved.png" width="260" alt="Saved page"><br>
 <sub><b>Saved.</b> Running total, which category saves most, and each entry with its discount %. Never subtracted from spending.</sub></td>
 <td width="50%" valign="top"><img src="docs/screenshots/03-stats.png" width="260" alt="Daily spending chart"><br>
-<sub><b>Stats.</b> Total spending with what I saved and the discount % right under it, then daily spending against the budget line and spending by category.</sub></td>
+<sub><b>Stats.</b> Total spending, with what I saved and the discount % right under it, then daily spending against the budget line. Tapping a bar opens that day's entries below the chart.</sub></td>
 </tr>
 <tr>
 <td width="50%" valign="top"><img src="docs/screenshots/04-accounts.png" width="260" alt="Currency exchange form"><br>
@@ -118,8 +118,8 @@ Balances are netted automatically (what they owe me minus what I owe them), and 
 
 ## Stats
 
-- **What I saved, right under the total**: the amount and the discount % for the same period, one tap from the full Saved page
-- **Daily spending bar chart**, hand-written SVG, with a budget reference line, hover tooltips and a table view (a tooltip must never be the only way to read a value)
+- **Right under the total, two cells**: the change against last month (or last year), and what I saved with the discount % for the same period, one tap from the full Saved page
+- **Daily spending bar chart**, hand-written SVG, with a budget reference line, hover tooltips and a table view (a tooltip must never be the only way to read a value). Tapping a bar opens that day's entries right below the chart, without leaving the page
 - **By category, by country, by currency**, for the current trip, a month or a year
 - **Tax-refund list**, with entries marked as claimed
 
@@ -236,6 +236,7 @@ CLAUDE.md             The standing brief I give AI coding agents: decisions alre
 - **Savings** (2026-08-27 to 08-29): reference price on every entry, entered right on the logging keypad; a "how I saved" note; a Saved page with totals, per-category breakdown and discount %; a savings CSV
 - **Google Sheets sync** (2026-08-31): read-only export endpoint with its own token, nightly Apps Script with three sheets
 - **Savings up front** (2026-09-25): what I've saved now sits on the home screen and under the stats total instead of at the bottom of the stats page; the paid / original-price switch moved from the top row to just above the keypad, within thumb reach; Stats moved to the second tab
+- **Stats tidy-up** (2026-10-20): the comparison and savings lines under the total were cramped on a phone, so they became two cells; tapping a bar in the daily chart shows that day's entries
 
 ### How it was verified
 

@@ -656,9 +656,6 @@ button { background: none; border: 0; cursor: pointer; padding: 0; }
 .fieldtab.on .v { color: var(--text); }
 .fieldtab.ref.on { color: var(--ok); box-shadow: inset 0 -3px 0 var(--ok); }
 
-/* 統計頁總支出下面那行省下，點了進省下清單 */
-.savedline { display: block; margin-top: 6px; padding: 0; text-align: left; color: var(--muted); }
-.savedline b { color: var(--ok); }
 
 /* ---------------------------------------------------------------- 計算機浮層 */
 
@@ -696,3 +693,16 @@ button { background: none; border: 0; cursor: pointer; padding: 0; }
 .saveline .sub { display: block; font-size: 12px; color: var(--faint); margin-top: 1px; }
 .saveline .amt { text-align: right; flex: none; margin-left: auto; }
 .saveline .amt .a { display: block; font-size: 15px; font-weight: 650; }
+
+/* ---------------------------------------------------------------- 統計：跟上期比、省下 */
+
+.cmpgrid .stat { text-align: left; }
+.cmpgrid .stat.full { grid-column: span 2; border-right: 0; }
+.cmpgrid button.stat:active { background: var(--raised); }
+.cmpgrid .stat .v { font-size: 19px; }
+
+/* 點長條：選中的那天換深色，圖表下方展開那天的明細 */
+.chart-svg.picking .bar:not(.on) { opacity: .3; }
+.chart-hint { padding: 4px 22px 10px; font-size: 12px; color: var(--faint); }
+.daypick { border-top: 1px solid var(--line); }
+

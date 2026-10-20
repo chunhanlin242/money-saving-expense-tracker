@@ -34,7 +34,7 @@ function barPath(x, y, w, h) {
  * days: [{ date: 'YYYY-MM-DD', twd: number }]，已按日期排序
  * budget: 每日預算（台幣），沒有就傳 null
  */
-export function dailyChart(days, budget) {
+export function dailyChart(days, budget, selected = null) {
   if (!days.length) return "";
 
   const W = 680, H = 200;                      // viewBox 座標，實際寬度由 CSS 撐滿
@@ -56,7 +56,7 @@ export function dailyChart(days, budget) {
 
   return `
   <figure class="chart" role="group" aria-label="每日花費長條圖">
-    <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" class="chart-svg">
+    <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" class="chart-svg${selected ? " picking" : ""}">
       ${ticks.map((t) => `
         <line class="grid" x1="${padL}" x2="${W - padR}" y1="${y(t).toFixed(1)}" y2="${y(t).toFixed(1)}"/>
         <text class="tick num" x="${padL - 8}" y="${(y(t) + 4).toFixed(1)}" text-anchor="end">${t >= 1000 ? Math.round(t / 1000) + "k" : Math.round(t)}</text>
@@ -70,7 +70,7 @@ export function dailyChart(days, budget) {
       ${days.map((d, i) => {
         const x = padL + band * i + (band - barW) / 2;
         const h = Math.max(0, padT + plotH - y(d.twd));
-        return `<path class="bar" d="${barPath(x, y(d.twd), barW, h)}"/>`;
+        return `<path class="bar${d.date === selected ? " on" : ""}" d="${barPath(x, y(d.twd), barW, h)}"/>`;
       }).join("")}
 
       ${days.map((d, i) => labelIdx.has(i)
@@ -90,7 +90,7 @@ export function dailyChart(days, budget) {
       ${days.map((d, i) => `
         <rect class="hit" data-i="${i}" x="${(padL + band * i).toFixed(1)}" y="${padT}"
               width="${band.toFixed(1)}" height="${plotH}"
-              data-date="${esc(d.date)}" data-twd="${d.twd}"/>
+              data-day="${esc(d.date)}" data-twd="${d.twd}"/>
       `).join("")}
     </svg>
     <div class="chart-tip" hidden></div>
@@ -115,7 +115,7 @@ export function bindChart(root) {
   const svg = fig.querySelector(".chart-svg");
 
   const show = (rect) => {
-    const date = rect.dataset.date;
+    const date = rect.dataset.day;
     const twd = Number(rect.dataset.twd);
     tip.innerHTML = `<span class="d">${esc(fx.formatDateLabel(date))}</span><span class="v num">${esc(fx.formatTwd(twd))}</span>`;
     tip.hidden = false;

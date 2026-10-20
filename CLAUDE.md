@@ -59,7 +59,7 @@ That situation almost always means the wrong wallet was picked while logging, an
 |---|---|
 | Home | How much today? How much this trip? How much have I saved? What did I just log? (**Deliberately only three blocks; don't pile more on top**; "saved" is one cell in the number grid, not a separate block, and doesn't link to the Saved page) |
 | Entries | Every entry, tap to edit |
-| Stats | Where did the money go (category share, spending by country), and how much did I save (one line under the total: amount saved + discount %, tapping it opens the Saved page) |
+| Stats | Where did the money go (category share, spending by country), and how much did I save (two cells under the total: change vs last month / year, and amount saved + discount %, tapping it opens the Saved page). Tapping a bar in the daily chart opens that day's entries right below the chart, without leaving the page |
 | Accounts | How much do I have left (cash balances, card limit this month). Opened from 💳 in the home header or from Settings |
 | Settings | Trips, payment methods, exchange rates, sync |
 
