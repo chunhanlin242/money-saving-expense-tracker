@@ -120,7 +120,7 @@ Balances are netted automatically (what they owe me minus what I owe them), and 
 
 - **Right under the total, two cells**: the change against last month (or last year), and what I saved with the discount % for the same period, one tap from the full Saved page
 - **Daily spending bar chart**, hand-written SVG, with a budget reference line, hover tooltips and a table view (a tooltip must never be the only way to read a value). Tapping a bar opens that day's entries right below the chart, without leaving the page
-- **By category, by country, by currency**, for the current trip, a month or a year
+- **By category, by country, by currency**, for the current trip, a week (Sunday to Saturday), a month or a year, each compared with the one before
 - **Tax-refund list**, with entries marked as claimed
 
 **No pie charts.** A pie of 12 categories can't be read: the eye can't compare adjacent slice angles. Sorted bars with the numbers beside them double as a table. Likewise, "pre-trip vs on the ground" is just two numbers, a statistic rather than a chart.
@@ -236,7 +236,7 @@ CLAUDE.md             The standing brief I give AI coding agents: decisions alre
 - **Savings** (2026-08-27 to 08-29): reference price on every entry, entered right on the logging keypad; a "how I saved" note; a Saved page with totals, per-category breakdown and discount %; a savings CSV
 - **Google Sheets sync** (2026-08-31): read-only export endpoint with its own token, nightly Apps Script with three sheets
 - **Savings up front** (2026-09-25): what I've saved now sits on the home screen and under the stats total instead of at the bottom of the stats page; the paid / original-price switch moved from the top row to just above the keypad, within thumb reach; Stats moved to the second tab
-- **Stats tidy-up** (2026-10-20): the comparison and savings lines under the total were cramped on a phone, so they became two cells; tapping a bar in the daily chart shows that day's entries
+- **Stats tidy-up** (2026-10-20): the comparison and savings lines under the total were cramped on a phone, so they became two cells; tapping a bar in the daily chart shows that day's entries; a week view was added alongside trip, month and year
 
 ### How it was verified
 

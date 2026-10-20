@@ -70,6 +70,8 @@ The paid / original-price switch sits in a bar directly above the keypad. Don't 
 
 Tab order: Home, Stats, +, Entries, Settings (Stats is used more, so it gets the second slot, easier for the thumb).
 
+Stats periods: trip / week / month / year. **Weeks start on Sunday** (the user's choice, not ISO Monday).
+
 ## Files
 
 ```

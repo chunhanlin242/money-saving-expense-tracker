@@ -25,6 +25,7 @@ const state = {
   calMonth: "",              // 月曆目前顯示的月份 YYYY-MM
   selectedDate: null,        // 月曆選中的日期；記帳會落在這天
   statsPeriod: "trip",       // 'trip' | 'month' | 'year'
+  statsWeek: "",             // 那週週日的 YYYY-MM-DD
   statsMonth: "",            // YYYY-MM
   statsDay: null,            // 統計圖點選的那天，圖表下方展開明細
   statsYear: "",             // YYYY
@@ -2227,6 +2228,25 @@ function shiftMonth(ym, delta) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
 }
 
+// 一週從週日開始（使用者選的）。用中午算，避開夏令時間切換那天少一小時跑到前一天。
+function weekStart(dateStr) {
+  const d = new Date(dateStr + "T12:00:00");
+  d.setDate(d.getDate() - d.getDay());
+  return fx.localDate(d);
+}
+
+function shiftDays(dateStr, delta) {
+  const d = new Date(dateStr + "T12:00:00");
+  d.setDate(d.getDate() + delta);
+  return fx.localDate(d);
+}
+
+function weekLabel(start) {
+  const end = shiftDays(start, 6);
+  const md = (x) => `${+x.slice(5, 7)}/${+x.slice(8, 10)}`;
+  return `${md(start)}–${md(end)}`;
+}
+
 // 記帳要落在哪一天：月曆上選了哪天就是哪天，沒選就是今天
 function targetDate() {
   return state.selectedDate || fx.localDate(new Date());
@@ -2478,6 +2498,12 @@ function renderList() {
 // 「這個月總共花多少」的時候，通常不在乎它屬於哪一趟。
 function statsScope() {
   const all = state.entries.filter(isExpense);
+  if (state.statsPeriod === "week") {
+    const inWeek = (start) => { const end = shiftDays(start, 6); return (e) => e.spent_date >= start && e.spent_date <= end; };
+    return { rows: all.filter(inWeek(state.statsWeek)),
+             prev: all.filter(inWeek(shiftDays(state.statsWeek, -7))),
+             label: weekLabel(state.statsWeek), prevLabel: "上週" };
+  }
   if (state.statsPeriod === "month") {
     return { rows: all.filter((e) => e.spent_date.slice(0, 7) === state.statsMonth),
              prev: all.filter((e) => e.spent_date.slice(0, 7) === shiftMonth(state.statsMonth, -1)),
@@ -2499,7 +2525,7 @@ function statsPeriodBar() {
     <button class="calnav" data-stats="prev" aria-label="上一個">‹</button>
     <button class="calnav" data-stats="next" aria-label="下一個">›</button>`;
   return `<div class="calbar" style="padding-top:12px">
-    <div class="segmented">${seg("trip", "本趟")}${seg("month", "月")}${seg("year", "年")}</div>
+    <div class="segmented">${seg("trip", "本趟")}${seg("week", "週")}${seg("month", "月")}${seg("year", "年")}</div>
     <span style="margin-left:auto;display:flex;align-items:center">${nav}</span>
   </div>`;
 }
@@ -2787,6 +2813,7 @@ function bindScreen() {
     el.onclick = () => {
       const d = el.dataset.stats === "prev" ? -1 : 1;
       state.statsDay = null;
+      if (state.statsPeriod === "week") state.statsWeek = shiftDays(state.statsWeek, d * 7);
       if (state.statsPeriod === "month") state.statsMonth = shiftMonth(state.statsMonth, d);
       if (state.statsPeriod === "year") state.statsYear = String(+state.statsYear + d);
       render();
@@ -2932,6 +2959,7 @@ async function start() {
   state.startOnKeypad = await db.getMeta("start_on_keypad", false);
   state.homeView = await db.getMeta("home_view", "list");
   state.calMonth = fx.localDate(new Date()).slice(0, 7);
+  state.statsWeek = weekStart(fx.localDate(new Date()));
   state.statsMonth = state.calMonth;
   state.statsYear = state.calMonth.slice(0, 4);
   state.statsPeriod = await db.getMeta("stats_period", "trip");
