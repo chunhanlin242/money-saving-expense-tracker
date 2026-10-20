@@ -435,19 +435,35 @@ button { background: none; border: 0; cursor: pointer; padding: 0; }
 /* ---------------------------------------------------------------- 圖表
    資料是唯一能大聲的東西：格線與座標軸都壓到幾乎看不見，柱子細、留白多。 */
 
-.chart { margin: 0; padding: 4px 18px 0; position: relative; }
-.chart-svg { display: block; width: 100%; height: 200px; overflow: visible; }
+.chart { margin: 0; padding: 10px 18px 0; position: relative; }
+.chart-plot { position: relative; }
+.chart-svg { display: block; width: 100%; height: 210px; overflow: visible; }
 
+/* 線不跟著 SVG 橫向拉伸變粗變細 */
+.chart line, .chart .brk { vector-effect: non-scaling-stroke; }
 .chart .grid       { stroke: var(--line-soft); stroke-width: 1; }        /* 實線細線，不用虛線 */
-.chart .tick       { fill: var(--faint); font-size: 11px; }
 .chart .bar        { fill: var(--accent); }
-.chart .peak       { fill: var(--muted); font-size: 11px; font-weight: 600; }
+.chart .brk        { stroke: var(--bg); stroke-width: 3; fill: none; }   /* 截斷缺口，跟背景同色 */
 .chart .hit        { fill: transparent; cursor: pointer; outline: none; }
 .chart .hit:hover  { fill: var(--accent); fill-opacity: .06; }
 .chart .hit:focus-visible { fill: var(--accent); fill-opacity: .12; }
-
 .chart .budget-line  { stroke: var(--muted); stroke-width: 1; }
-.chart .budget-label { fill: var(--muted); font-size: 10px; letter-spacing: .04em; }
+
+/* 圖表上的字放在 HTML 層，用百分比對到 SVG 座標；這樣不會被拉伸壓扁 */
+.chart-labels { position: absolute; inset: 0; pointer-events: none; }
+.chart-labels span {
+  position: absolute; white-space: nowrap; line-height: 1;
+  --tx: -50%; --ty: 0;
+  transform: translate(var(--tx), var(--ty));
+}
+.chart-labels .tick         { font-size: 11px; color: var(--faint); }
+.chart-labels .peak         { font-size: 11px; font-weight: 600; color: var(--muted); }
+.chart-labels .budget-label { font-size: 10px; color: var(--muted); letter-spacing: .04em; }
+.chart-labels .a-left       { --tx: -100%; --ty: -50%; }
+.chart-labels .a-start      { --tx: -10px; }
+.chart-labels .a-end        { --tx: calc(-100% + 10px); }
+.chart-labels .a-above      { --ty: -100%; }
+.chart-labels .a-above-end  { --tx: -100%; --ty: calc(-100% - 3px); }
 
 .chart-tip {
   position: absolute; bottom: 100%; transform: translateX(-50%);
@@ -705,4 +721,13 @@ button { background: none; border: 0; cursor: pointer; padding: 0; }
 .chart-svg.picking .bar:not(.on) { opacity: .3; }
 .chart-hint { padding: 4px 22px 10px; font-size: 12px; color: var(--faint); }
 .daypick { border-top: 1px solid var(--line); }
+
+/* 統計頁放鬆一點：使用者回報字擠在一起 */
+.stats .hero { padding-bottom: 24px; }
+.stats .hero .secondary { margin-top: 6px; line-height: 1.5; }
+.stats .cmpgrid .stat { padding: 16px 18px 18px; }
+.stats .cmpgrid .stat .v { margin: 4px 0 2px; }
+.stats .section-head { padding-top: 28px; }
+.stats .row.limit { padding-top: 16px; padding-bottom: 18px; }
+.stats .chart-hint { padding: 6px 22px 14px; }
 

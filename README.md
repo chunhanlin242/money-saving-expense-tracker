@@ -119,7 +119,7 @@ Balances are netted automatically (what they owe me minus what I owe them), and 
 ## Stats
 
 - **Right under the total, two cells**: the change against last month (or last year), and what I saved with the discount % for the same period, one tap from the full Saved page
-- **Daily spending bar chart**, hand-written SVG, with a budget reference line, hover tooltips and a table view (a tooltip must never be the only way to read a value). Tapping a bar opens that day's entries right below the chart, without leaving the page
+- **Daily spending bar chart**, hand-written SVG, with a budget reference line, hover tooltips and a table view (a tooltip must never be the only way to read a value). Tapping a bar opens that day's entries right below the chart, without leaving the page. **Outliers are capped**: rent once a month used to flatten every other day into a line, so the scale follows ordinary days and an outlier bar gets a break mark with its amount. Text sits in an HTML layer over the SVG, because SVG text stretched to the screen width gets squashed
 - **By category, by country, by currency**, for the current trip, a week (Sunday to Saturday), a month or a year, each compared with the one before
 - **Tax-refund list**, with entries marked as claimed
 

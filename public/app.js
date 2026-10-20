@@ -2607,7 +2607,7 @@ function renderStats() {
   const savedTotal = sum(savedRows, savedTwd);
 
   return topbar("統計") + `
-    <div class="screen">
+    <div class="screen stats">
       ${statsPeriodBar()}
       ${rows.length ? `
       <div class="hero">

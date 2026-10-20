@@ -72,6 +72,9 @@ Tab order: Home, Stats, +, Entries, Settings (Stats is used more, so it gets the
 
 Stats periods: trip / week / month / year. **Weeks start on Sunday** (the user's choice, not ISO Monday).
 
+Daily chart: **all text lives in an HTML layer outside the SVG** (the SVG stretches to full width with preserveAspectRatio="none", so text inside it gets squashed; the user reported this).
+Outliers such as monthly rent are capped: the scale follows ordinary days (85th percentile of non-zero days × 2), and bars above it get a break mark and their amount. Don't go back to scaling by the highest day.
+
 ## Files
 
 ```
